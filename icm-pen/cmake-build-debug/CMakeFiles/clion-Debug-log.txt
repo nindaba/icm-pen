@@ -1,0 +1,66 @@
+/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" -S /Users/nindaba/Documents/vistula/semester-7/pen-motion/icm-pen -B /Users/nindaba/Documents/vistula/semester-7/pen-motion/icm-pen/cmake-build-debug
+CMake Deprecation Warning:
+  Support for "Extra Generators" like
+
+    CodeBlocks
+
+  is deprecated and will be removed from a future version of CMake.  IDEs may
+  use the cmake-file-api(7) to view CMake-generated project build trees.
+
+
+CMake Warning at /Users/nindaba/Documents/vistula/semester-7/pen-motion/esp-idf/tools/cmake/idf.cmake:24 (message):
+  IDF_PATH environment variable not found.  Setting IDF_PATH to
+  '/Users/nindaba/esp/esp-idf'.
+Call Stack (most recent call first):
+  /Users/nindaba/Documents/vistula/semester-7/pen-motion/esp-idf/tools/cmake/project.cmake:29 (include)
+  CMakeLists.txt:6 (include)
+
+
+-- The C compiler identification is unknown
+-- The CXX compiler identification is unknown
+-- The ASM compiler identification is unknown
+-- Found assembler: xtensa-esp32-elf-gcc
+CMake Error at /Users/nindaba/Documents/vistula/semester-7/pen-motion/esp-idf/tools/cmake/project.cmake:564 (__project):
+  The CMAKE_C_COMPILER:
+
+    xtensa-esp32-elf-gcc
+
+  is not a full path and was not found in the PATH.
+
+  Tell CMake where to find the compiler by setting either the environment
+  variable "CC" or the CMake cache entry CMAKE_C_COMPILER to the full path to
+  the compiler, or to the compiler name if it is in the PATH.
+Call Stack (most recent call first):
+  CMakeLists.txt:7 (project)
+
+
+CMake Error at /Users/nindaba/Documents/vistula/semester-7/pen-motion/esp-idf/tools/cmake/project.cmake:564 (__project):
+  The CMAKE_CXX_COMPILER:
+
+    xtensa-esp32-elf-g++
+
+  is not a full path and was not found in the PATH.
+
+  Tell CMake where to find the compiler by setting either the environment
+  variable "CXX" or the CMake cache entry CMAKE_CXX_COMPILER to the full path
+  to the compiler, or to the compiler name if it is in the PATH.
+Call Stack (most recent call first):
+  CMakeLists.txt:7 (project)
+
+
+CMake Error at /Users/nindaba/Documents/vistula/semester-7/pen-motion/esp-idf/tools/cmake/project.cmake:564 (__project):
+  The CMAKE_ASM_COMPILER:
+
+    xtensa-esp32-elf-gcc
+
+  is not a full path and was not found in the PATH.
+
+  Tell CMake where to find the compiler by setting either the environment
+  variable "ASM" or the CMake cache entry CMAKE_ASM_COMPILER to the full path
+  to the compiler, or to the compiler name if it is in the PATH.
+Call Stack (most recent call first):
+  CMakeLists.txt:7 (project)
+
+
+-- Warning: Did not find file Compiler/-ASM
+-- Configuring incomplete, errors occurred!
