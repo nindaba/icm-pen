@@ -8,11 +8,11 @@
 #include <stdio.h>
 #include "driver/i2c_master.h"
 
-#define ICM_ADDRESS            0x68
+#define ICM_ADDRESS            0x69
 #define I2C_FREQ               400000
 #define I2C_TIMEOUT_VALUE_MS   50
-#define I2C_MASTER_SCL         19
-#define I2C_MASTER_SDA         18
+#define I2C_MASTER_SCL         22
+#define I2C_MASTER_SDA         21
 
 uint8_t i2c_init_with_default(void);
 
