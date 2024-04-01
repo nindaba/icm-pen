@@ -222,7 +222,7 @@ uint8_t i2c_write(uint8_t reg, uint8_t *data, uint8_t len) {
     for (int i = 0; i < len; i++) {
         buf[i + 1] = data[i];
     }
-    esp_err_t ret = i2c_master_transmit(dev_handle, data, len + 1, I2C_TIMEOUT_VALUE_MS);
+    esp_err_t ret = i2c_master_transmit(dev_handle, buf, len + 1, I2C_TIMEOUT_VALUE_MS);
     if (ret != ESP_OK) {
         ESP_LOGE(TAG, "I2C write failed: %s", esp_err_to_name(ret));
         return 1;

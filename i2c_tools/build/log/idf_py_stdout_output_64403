@@ -1,7 +1,0 @@
-[1/4] cd /Users/nindaba/Documents/vistula/semester-7/pen-motion/i2c_tools/build/esp-idf/esptool_py && /Users/nindaba/.espressif/python_env/idf5.3_py3.11_env/bin/python /Users/nindaba/esp/esp-idf/components/partition_table/check_sizes.py --offset 0x8000 partition --type app /Users/nindaba/Documents/vistula/semester-7/pen-motion/i2c_tools/build/partition_table/partition-table.bin /Users/nindaba/Documents/vistula/semester-7/pen-motion/i2c_tools/build/i2c_tools.bin
-i2c_tools.bin binary size 0x4d260 bytes. Smallest app partition is 0x100000 bytes. 0xb2da0 bytes (70%) free.
-[2/4] Performing build step for 'bootloader'
-[1/1] cd /Users/nindaba/Documents/vistula/semester-7/pen-motion/i2c_tools/build/bootloader/esp-idf/esptool_py && /Users/nindaba/.espressif/python_env/idf5.3_py3.11_env/bin/python /Users/nindaba/esp/esp-idf/components/partition_table/check_sizes.py --offset 0x8000 bootloader 0x1000 /Users/nindaba/Documents/vistula/semester-7/pen-motion/i2c_tools/build/bootloader/bootloader.bin
-Bootloader binary size 0x6050 bytes. 0xfb0 bytes (14%) free.
-[3/4] No install step for 'bootloader'
-[4/4] Completed 'bootloader'

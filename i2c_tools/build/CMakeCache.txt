@@ -335,7 +335,7 @@ Mbed TLS_IS_TOP_LEVEL:STATIC=OFF
 Mbed TLS_SOURCE_DIR:STATIC=/Users/nindaba/esp/esp-idf/components/mbedtls/mbedtls
 
 //No help, variable specified on the command line.
-PYTHON:UNINITIALIZED=/Users/nindaba/.espressif/python_env/idf5.3_py3.11_env/bin/python
+PYTHON:UNINITIALIZED=/Users/nindaba/.espressif/python_env/idf5.3_py3.12_env/bin/python
 
 //No help, variable specified on the command line.
 PYTHON_DEPS_CHECKED:UNINITIALIZED=1
@@ -578,7 +578,7 @@ C_COMPILER_SUPPORTS_WFORMAT_SIGNEDNESS:INTERNAL=1
 //Details about finding Git
 FIND_PACKAGE_MESSAGE_DETAILS_Git:INTERNAL=[/usr/bin/git][v2.39.3 (Apple Git-146)()]
 //Details about finding Python3
-FIND_PACKAGE_MESSAGE_DETAILS_Python3:INTERNAL=[/Users/nindaba/.espressif/python_env/idf5.3_py3.11_env/bin/python][cfound components: Interpreter ][v3.11.7()]
+FIND_PACKAGE_MESSAGE_DETAILS_Python3:INTERNAL=[/Users/nindaba/.espressif/python_env/idf5.3_py3.12_env/bin/python][cfound components: Interpreter ][v3.12.2()]
 //ADVANCED property for variable: GIT_EXECUTABLE
 GIT_EXECUTABLE-ADVANCED:INTERNAL=1
 //CMAKE_INSTALL_PREFIX during last run
@@ -587,10 +587,10 @@ _GNUInstallDirs_LAST_CMAKE_INSTALL_PREFIX:INTERNAL=/usr/local
 _Python3_Compiler_REASON_FAILURE:INTERNAL=
 //Development reason failure
 _Python3_Development_REASON_FAILURE:INTERNAL=
-_Python3_EXECUTABLE:INTERNAL=/Users/nindaba/.espressif/python_env/idf5.3_py3.11_env/bin/python
+_Python3_EXECUTABLE:INTERNAL=/Users/nindaba/.espressif/python_env/idf5.3_py3.12_env/bin/python
 //Python3 Properties
-_Python3_INTERPRETER_PROPERTIES:INTERNAL=Python;3;11;7;32;64;;;abi3;/opt/homebrew/opt/python@3.11/Frameworks/Python.framework/Versions/3.11/lib/python3.11;/Users/nindaba/.espressif/python_env/idf5.3_py3.11_env/lib/python3.11;/Users/nindaba/.espressif/python_env/idf5.3_py3.11_env/lib/python3.11/site-packages;/Users/nindaba/.espressif/python_env/idf5.3_py3.11_env/lib/python3.11/site-packages
-_Python3_INTERPRETER_SIGNATURE:INTERNAL=0134d42449b29351ab1c97168933f10d
+_Python3_INTERPRETER_PROPERTIES:INTERNAL=Python;3;12;2;32;64;;;abi3;/opt/homebrew/opt/python@3.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12;/Users/nindaba/.espressif/python_env/idf5.3_py3.12_env/lib/python3.12;/Users/nindaba/.espressif/python_env/idf5.3_py3.12_env/lib/python3.12/site-packages;/Users/nindaba/.espressif/python_env/idf5.3_py3.12_env/lib/python3.12/site-packages
+_Python3_INTERPRETER_SIGNATURE:INTERNAL=d13dbd08d75f7b2ceafd496625c8a7e4
 //NumPy reason failure
 _Python3_NumPy_REASON_FAILURE:INTERNAL=
 

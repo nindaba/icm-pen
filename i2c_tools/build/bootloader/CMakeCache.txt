@@ -254,7 +254,7 @@ IGNORE_EXTRA_COMPONENT:UNINITIALIZED=
 PROJECT_SOURCE_DIR:UNINITIALIZED=/Users/nindaba/Documents/vistula/semester-7/pen-motion/i2c_tools
 
 //No help, variable specified on the command line.
-PYTHON:UNINITIALIZED=/Users/nindaba/.espressif/python_env/idf5.3_py3.11_env/bin/python
+PYTHON:UNINITIALIZED=/Users/nindaba/.espressif/python_env/idf5.3_py3.12_env/bin/python
 
 //No help, variable specified on the command line.
 PYTHON_DEPS_CHECKED:UNINITIALIZED=1

@@ -1,7 +1,7 @@
 {
     "version":            "1.1",
     "project_name":       "bootloader",
-    "project_version":    "v5.3-dev-2815-gbe06a6f5ff",
+    "project_version":    "v5.3-dev-2815-gbe06a6f5ff-dirty",
     "project_path":       "/Users/nindaba/esp/esp-idf/components/bootloader/subproject",
     "idf_path":           "/Users/nindaba/esp/esp-idf",
     "build_dir":          "/Users/nindaba/Documents/vistula/semester-7/pen-motion/i2c_tools/build/bootloader",
@@ -11,7 +11,7 @@
     "app_elf":            "bootloader.elf",
     "app_bin":            "bootloader.bin",
     "build_type":         "flash_app",
-    "git_revision":       "v5.3-dev-2815-gbe06a6f5ff",
+    "git_revision":       "v5.3-dev-2815-gbe06a6f5ff-dirty",
     "target":             "esp32",
     "rev":                "0",
     "min_rev":            "0",

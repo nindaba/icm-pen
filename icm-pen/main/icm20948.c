@@ -412,18 +412,6 @@ void icm20948_accel_full_scale_select(accel_full_scale full_scale)
 }
 
 
-/* Static Functions */
-//static void cs_high()
-//{
-//    HAL_GPIO_WritePin(ICM20948_SPI_CS_PIN_PORT, ICM20948_SPI_CS_PIN_NUMBER, SET);
-//}
-//
-//static void cs_low()
-//{
-//    HAL_GPIO_WritePin(ICM20948_SPI_CS_PIN_PORT, ICM20948_SPI_CS_PIN_NUMBER, RESET);
-//}
-
-
 static uint8_t read_single_icm20948_reg(userbank ub, uint8_t reg)
 {
     return read_multiple_icm20948_reg(ub,reg,1)[0];

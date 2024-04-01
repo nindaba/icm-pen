@@ -18,7 +18,7 @@ set(HEAD_HASH)
 file(READ "/Users/nindaba/Documents/vistula/semester-7/pen-motion/i2c_tools/build/CMakeFiles/git-data/HEAD" HEAD_CONTENTS LIMIT 1024)
 
 string(STRIP "${HEAD_CONTENTS}" HEAD_CONTENTS)
-set(GIT_DIR "/Users/nindaba/esp/esp-idf/.git")
+set(GIT_DIR "/Users/nindaba/Documents/vistula/semester-7/pen-motion/.git")
 # handle git-worktree
 if(EXISTS "${GIT_DIR}/commondir")
 	file(READ "${GIT_DIR}/commondir" GIT_DIR_NEW LIMIT 1024)

@@ -1,7 +1,7 @@
 {
     "version":            "1.1",
     "project_name":       "i2c_tools",
-    "project_version":    "1",
+    "project_version":    "3537718-dirty",
     "project_path":       "/Users/nindaba/Documents/vistula/semester-7/pen-motion/i2c_tools",
     "idf_path":           "/Users/nindaba/esp/esp-idf",
     "build_dir":          "/Users/nindaba/Documents/vistula/semester-7/pen-motion/i2c_tools/build",
@@ -11,7 +11,7 @@
     "app_elf":            "i2c_tools.elf",
     "app_bin":            "i2c_tools.bin",
     "build_type":         "flash_app",
-    "git_revision":       "v5.3-dev-2815-gbe06a6f5ff",
+    "git_revision":       "v5.3-dev-2815-gbe06a6f5ff-dirty",
     "target":             "esp32",
     "rev":                "0",
     "min_rev":            "0",
@@ -2769,18 +2769,6 @@
             "managed_priv_reqs": [],
             "include_dirs": [ "." ]
         },
-        "cmd_wifi": {
-            "alias": "idf::cmd_wifi",
-            "target": "___idf_cmd_wifi",
-            "prefix": "idf",
-            "dir": "/Users/nindaba/esp/esp-idf/examples/system/console/advanced/components/cmd_wifi",
-            "lib": "__idf_cmd_wifi",
-            "reqs": [ "console", "esp_wifi" ],
-            "priv_reqs": [],
-            "managed_reqs": [],
-            "managed_priv_reqs": [],
-            "include_dirs": [ "." ]
-        },
         "cmd_system": {
             "alias": "idf::cmd_system",
             "target": "___idf_cmd_system",
@@ -2788,6 +2776,18 @@
             "dir": "/Users/nindaba/esp/esp-idf/examples/system/console/advanced/components/cmd_system",
             "lib": "__idf_cmd_system",
             "reqs": [ "console", "spi_flash", "driver", "esp_driver_gpio" ],
+            "priv_reqs": [],
+            "managed_reqs": [],
+            "managed_priv_reqs": [],
+            "include_dirs": [ "." ]
+        },
+        "cmd_wifi": {
+            "alias": "idf::cmd_wifi",
+            "target": "___idf_cmd_wifi",
+            "prefix": "idf",
+            "dir": "/Users/nindaba/esp/esp-idf/examples/system/console/advanced/components/cmd_wifi",
+            "lib": "__idf_cmd_wifi",
+            "reqs": [ "console", "esp_wifi" ],
             "priv_reqs": [],
             "managed_reqs": [],
             "managed_priv_reqs": [],
