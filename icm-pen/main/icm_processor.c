@@ -49,7 +49,8 @@ static int read_icm_cmd(int argc, char **argv) {
 
     int repeats = i2c_args.number_of_reads->ival[0];
 
-    if(repeats < 1) {
+
+    if (repeats < 0) {
         printf("Number of values to be read must be greater than 0 falling back to DEFAULT_NUM_OF_READINGS\r\n");
         repeats = DEFAULT_NUM_OF_READINGS;
     }
@@ -82,6 +83,7 @@ static int read_icm_cmd(int argc, char **argv) {
 static void register_icm_read_cmds(void) {
     i2c_args.number_of_reads = arg_int0("r", "reads-count", "<repeats>", "Number of readings to take");
     i2c_args.end = arg_end(1);
+    i2c_args.number_of_reads->ival[0] = DEFAULT_NUM_OF_READINGS;
     const esp_console_cmd_t cmd = {
             .command = "icm_read",
             .help = "Number of cycles to read from ICM",
