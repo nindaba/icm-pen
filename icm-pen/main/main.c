@@ -2,7 +2,8 @@
 #include "pen_console.h"
 #include "pen_i2c.h"
 #include "icm_processor.h"
-//#include "wifi_smartconfig.h"
+#include "wifi_smartconfig.h"
+#include "udp_server.h"
 
 static void register_all_cmds(void) {
     register_icm_cmds();
@@ -10,8 +11,10 @@ static void register_all_cmds(void) {
 }
 
 static void init_connections(void) {
-    i2c_init();
-//    wifi_init();
+    i2c_init_with_default();
+    icm_init();
+    wifi_init();
+    star_server(&read_all_sensor_values);
 }
 
 void app_main(void) {

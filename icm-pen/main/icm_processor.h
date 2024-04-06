@@ -8,7 +8,10 @@
 #define CSV_LINE_LENGTH             117
 #define DEFAULT_NUM_OF_READINGS      500
 
-void send_values_to_wifi();
+void read_all_sensor_values(char *values);
+
 void register_icm_cmds(void);
+
+void icm_init(void);
 
 #endif //PEN_MOTION_ICM_PROCESSOR_H

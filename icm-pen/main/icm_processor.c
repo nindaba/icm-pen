@@ -7,13 +7,10 @@
 #include "esp_console.h"
 #include "argtable3/argtable3.h"
 
-static void icm_init() {
-    icm20948_init();
-//    ak09916_init();
-}
 
 static int icm_init_cmd(int argc, char **argv) {
-    icm_init();
+    icm20948_init();
+    ak09916_init();
     return 0;
 }
 
@@ -56,7 +53,6 @@ static int read_icm_cmd(int argc, char **argv) {
     }
 
     printf("initializing ICM\r\n");
-    icm_init();
     printf("Done initializing ICM\r\n");
     printf("Starting Readings\r\n");
 
@@ -72,7 +68,7 @@ static int read_icm_cmd(int argc, char **argv) {
     for (int i = 0; i < repeats; ++i) {
         icm20948_gyro_read_dps(&gyr);
         icm20948_accel_read_g(&acc);
-//        ak09916_mag_read_uT(&mag);
+        ak09916_mag_read_uT(&mag);
 
         format_csv_line(line, &acc, &gyr, &mag);
         printf("%s\r", line);
@@ -95,26 +91,19 @@ static void register_icm_read_cmds(void) {
     ESP_ERROR_CHECK(esp_console_cmd_register(&cmd));
 }
 
-static int send_values_to_wifi_cmd(int argc, char **argv) {
-    send_values_to_wifi();
-    return 0;
+void icm_init() {
+    icm20948_init();
+    ak09916_init();
 }
 
-void send_values_to_wifi() {
-    printf("Starting Readings\r\n");
+void read_all_sensor_values(char *values) {
     axises gyr, acc, mag;
-    char line[CSV_LINE_LENGTH];
 
-    while (1) {
-        icm20948_gyro_read_dps(&gyr);
-        icm20948_accel_read_g(&acc);
-        ak09916_mag_read_uT(&mag);
+    icm20948_gyro_read_dps(&gyr);
+    icm20948_accel_read_g(&acc);
+    ak09916_mag_read_uT(&mag);
 
-        format_csv_line(line, &acc, &gyr, &mag);
-        //send to wifi
-        printf("%s\r", line);
-    }
-
+    format_csv_line(values, &acc, &gyr, &mag);
 }
 
 void register_icm_cmds(void) {
