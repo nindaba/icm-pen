@@ -96,12 +96,12 @@ bool ak09916_mag_read(axises *data) {
     uint8_t drdy, hofl;    // data ready, overflow
 
     drdy = read_single_ak09916_reg(MAG_ST1) & 0x01;
-    if (!drdy) return false;
+//    if (!drdy) return false;
 
     temp = read_multiple_ak09916_reg(MAG_HXL, 6);
 
     hofl = read_single_ak09916_reg(MAG_ST2) & 0x08;
-    if (hofl) return false;
+//    if (hofl) return false;
 
     data->x = (int16_t)(temp[1] << 8 | temp[0]);
     data->y = (int16_t)(temp[3] << 8 | temp[2]);
@@ -145,7 +145,7 @@ bool icm20948_who_am_i() {
 }
 
 bool ak09916_who_am_i() {
-    return read_multiple_ak09916_reg(MAG_WIA2, 2)[1] == AK09916_ID;
+    return read_single_ak09916_reg(MAG_WIA2) == AK09916_ID;
 }
 
 void icm20948_device_reset() {
