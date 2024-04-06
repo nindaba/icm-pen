@@ -96,12 +96,12 @@ bool ak09916_mag_read(axises *data) {
     uint8_t drdy, hofl;    // data ready, overflow
 
     drdy = read_single_ak09916_reg(MAG_ST1) & 0x01;
-//    if (!drdy) return false;
+    if (!drdy) return false;
 
     temp = read_multiple_ak09916_reg(MAG_HXL, 6);
 
     hofl = read_single_ak09916_reg(MAG_ST2) & 0x08;
-//    if (hofl) return false;
+    if (hofl) return false;
 
     data->x = (int16_t)(temp[1] << 8 | temp[0]);
     data->y = (int16_t)(temp[3] << 8 | temp[2]);
