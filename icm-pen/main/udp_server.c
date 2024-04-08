@@ -14,10 +14,22 @@
 #include "lwip/sys.h"
 #include <lwip/netdb.h>
 #include "udp_server.h"
+#include "esp_console.h"
 
 #define PORT 8020
 
 static const char *TAG = "udp_server";
+
+TaskHandle_t udp_server_task_handle;
+int sock = -1;
+
+static void shutdown_socket() {
+    if (sock != -1) {
+        ESP_LOGE(TAG, "Shutting down socket and restarting...");
+        shutdown(sock, 0);
+        close(sock);
+    }
+}
 
 static void check_wifi_connection(void) {
     wifi_ap_record_t ap_info;
@@ -50,7 +62,7 @@ static void udp_server_task(void *pvParameters) {
         ip_protocol = IPPROTO_IP;
 
 
-        int sock = socket(AF_INET, SOCK_DGRAM, ip_protocol);
+        sock = socket(AF_INET, SOCK_DGRAM, ip_protocol);
         if (sock < 0) {
             ESP_LOGE(TAG, "Unable to create socket: errno %d", errno);
             break;
@@ -117,29 +129,56 @@ static void udp_server_task(void *pvParameters) {
                 ESP_LOGI(TAG, "Received %d bytes from %s:", len, addr_str);
                 ESP_LOGI(TAG, "%s", rx_buffer);
 
+
                 while (1) {
                     provider(rx_buffer);
 
                     int err = sendto(sock, rx_buffer, strlen(rx_buffer), 0, (struct sockaddr *) &source_addr,
                                      sizeof(source_addr));
-                    if (err < 0) {
-                        ESP_LOGE(TAG, "Error occurred during sending: errno %d", errno);
+
+                    if (err < 0 && errno != ENOMEM) {
+                        ESP_LOGE(TAG, "Error occurred during sending: errno %d, %d", errno, err);
                         break;
                     }
                 }
             }
         }
 
-        if (sock != -1) {
-            ESP_LOGE(TAG, "Shutting down socket and restarting...");
-            shutdown(sock, 0);
-            close(sock);
-        }
+        shutdown_socket();
     }
     vTaskDelete(NULL);
 }
 
-void star_server(data_provider provider) {
-    xTaskCreate(udp_server_task, "udp_server", 4096, provider, 5, NULL);
+static void udp_start(data_provider provider) {
+    xTaskCreate(udp_server_task, "udp_server", 4096, provider, 5, &udp_server_task_handle);
+}
 
+static int udp_reboot(data_provider provider) {
+    vTaskDelete(udp_server_task_handle);
+    shutdown_socket();
+    udp_start(provider);
+    return ESP_OK;
+}
+
+
+static void udp_reboot_cmd() {
+    esp_console_cmd_t cmd = {
+            .command = "udp_reboot",
+            .help = "Reboot the udp server",
+            .hint = NULL,
+            .func = &udp_reboot,
+            .argtable = NULL
+    };
+
+    ESP_ERROR_CHECK(esp_console_cmd_register(&cmd));
+}
+
+static void register_udp_server_cmds() {
+    udp_reboot_cmd();
+}
+
+
+void udp_server_init(data_provider provider) {
+    udp_start(provider);
+    register_udp_server_cmds();
 }

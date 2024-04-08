@@ -7,6 +7,6 @@
 
 typedef void (*data_provider)(char *data);
 
-void star_server(data_provider provider);
+void udp_server_init(data_provider provider);
 
 #endif //PEN_MOTION_UDP_SERVER_H

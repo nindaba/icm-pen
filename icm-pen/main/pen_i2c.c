@@ -227,6 +227,8 @@ uint8_t i2c_write(uint8_t reg, uint8_t *data, uint8_t len) {
         ESP_LOGE(TAG, "I2C write failed: %s", esp_err_to_name(ret));
         return 1;
     }
+
+    free(buf);
     return ret;
 }
 

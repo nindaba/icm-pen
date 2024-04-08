@@ -14,7 +14,7 @@ static void init_connections(void) {
     i2c_init_with_default();
     icm_init();
     wifi_init();
-    star_server(&read_all_sensor_values);
+    udp_server_init(&read_all_sensor_values);
 }
 
 void app_main(void) {
