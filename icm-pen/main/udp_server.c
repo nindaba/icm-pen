@@ -21,6 +21,8 @@
 static const char *TAG = "udp_server";
 
 TaskHandle_t udp_server_task_handle;
+data_provider udp_data_provider;
+
 int sock = -1;
 
 static void shutdown_socket() {
@@ -135,7 +137,6 @@ static void udp_server_task(void *pvParameters) {
 
                     int err = sendto(sock, rx_buffer, strlen(rx_buffer), 0, (struct sockaddr *) &source_addr,
                                      sizeof(source_addr));
-
                     if (err < 0 && errno != ENOMEM) {
                         ESP_LOGE(TAG, "Error occurred during sending: errno %d, %d", errno, err);
                         break;
@@ -149,14 +150,14 @@ static void udp_server_task(void *pvParameters) {
     vTaskDelete(NULL);
 }
 
-static void udp_start(data_provider provider) {
-    xTaskCreate(udp_server_task, "udp_server", 4096, provider, 5, &udp_server_task_handle);
+static void udp_start() {
+    xTaskCreate(udp_server_task, "udp_server", 4096, udp_data_provider, 5, &udp_server_task_handle);
 }
 
-static int udp_reboot(data_provider provider) {
+static int udp_reboot() {
     vTaskDelete(udp_server_task_handle);
     shutdown_socket();
-    udp_start(provider);
+    udp_start();
     return ESP_OK;
 }
 
@@ -179,6 +180,7 @@ static void register_udp_server_cmds() {
 
 
 void udp_server_init(data_provider provider) {
-    udp_start(provider);
+    udp_data_provider = provider;
+    udp_start();
     register_udp_server_cmds();
 }
