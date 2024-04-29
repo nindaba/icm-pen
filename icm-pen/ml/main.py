@@ -5,9 +5,12 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as an
 import pandas as pd
 from statistics import mean
+from tensorflow.keras.models import load_model
+import numpy as np
 
 ESP32_ADDR = "192.168.1.57"
 ESP32_PORT = 8020
+READ_SIZE = READ_SIZE
 
 def save_csv_line(filename,line):
     with open(filename, mode='a', newline='') as file:
@@ -139,14 +142,12 @@ def collect():
     files_count = 0
     while True:
         lines = tcp_client.recv(4096).decode()
-        if count ==300:
+        if count == READ_SIZE:
             timestamp = pd.Timestamp.now()
             count = 0
             files_count += 1
         
         for line in lines.split("\n"):
-            #get timestamp for naming the file
-            # Use the timestamp to name the file
             print(line)
             
             if files_count == 100:
@@ -155,12 +156,53 @@ def collect():
                 print("#################################### sleeping for 5 seconds end   #########################################")
                 
                 
-            filename = os.path.join("data", "A","valid" , f"{timestamp}.csv")
+            filename = os.path.join("data", "A" , f"{timestamp}.csv")
             save_csv_line(filename, line + "\n")
             
         
         count += 1
         
+def client_speedometer():
+    count = 0
+    timestamp = pd.Timestamp.now()
+    while True:
+        lines = tcp_client.recv(4096).decode()
+        
+        for line in lines.split("\n"):
+            count += 1
+            read = (count / READ_SIZE) * 100
+            print(f"Reading {int(read)}%", end="\r")
+            if(count == READ_SIZE):
+                count = 0
+                
+                now = pd.Timestamp.now()
+                delta =  now - timestamp
+                timestamp = now
+                print(f"Time taken to read {READ_SIZE} lines: {delta.total_seconds()}")
+            
+        
+def predict():
+    model = load_model('ml/bin/icm_letters.keras')
+    buffer = np.zeros((1, READ_SIZE, 9))
+    count = 0
+    while True:
+        lines = tcp_client.recv(4096).decode()
+        for line in lines.split("\n"):
+            data = line.split(",")
+            if (len(data) == 9):
+                buffer[0, count] = data
+                count = count + 1
+                percentage = (count / READ_SIZE) * 100
+                print(f"Reading {int(percentage)} %", end="\r")
+        
+        if count == 299:
+            labels = ["A", "NULL"]
+            y = model.predict(buffer)
+            count = 0
+            max_index = np.argmax(y)
+            if y[0][max_index] > 0.5:
+                print(f"\nPredicted: {labels[max_index]}")
+       
 if __name__ == '__main__':
     # remove_broken_lines()
     # read_pen()
@@ -175,4 +217,6 @@ if __name__ == '__main__':
     # move_data_to_pure()
     # read_pen()
     
-        
+    # predict()
+    # client_speedometer()
+    collect()

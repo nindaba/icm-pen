@@ -1,70 +1,43 @@
-import os
-import pandas as pd
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, LSTM, InputLayer
 import numpy as np
-from keras.models import Sequential
-from keras.layers import LSTM, Dense , Input, Flatten, Conv2D 
-from keras import optimizers
-from keras.preprocessing.sequence import pad_sequences
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
-import tensorflow as tf
-import matplotlib.pyplot as plt
+import pandas as pd
+import os
+
+def create_model(features=9, hiddenUnits=100, classes=2):
+    model = Sequential()
+    model.add(InputLayer(shape=(None, features)))  # Sequence input layer
+    model.add(LSTM(hiddenUnits, return_sequences=False))  # LSTM layer
+    model.add(Dense(classes, activation='softmax'))  # Fully connected layer
+
+    # Compile the model
+    model.compile(loss='sparse_categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+    return model
 
 
+def load_data(base_paths,data_paths = [], labels = []):
+    data = []
+    for path in data_paths:
+        data.append(pd.read_csv(base_paths+path).values)
+    data = np.array(data)
+    return data, labels
 
-# Load the data
 
-# list all the files in data/A/
+a_letters_path = os.listdir("data/letters")
+a_labaels = [0] * len(a_letters_path)
 
-valid_files = os.listdir('data/A/valid')
-invalid_files = os.listdir('data/A/invalid')
+b_letters_path = os.listdir("data/letters")
+b_labels = [1] * len(b_letters_path)
 
-# map by reading test_files to csv 300 rows 9 columns
-# Initialize an empty list to store the data
-valid = []
-invalid = []
+a_data, a_labels = load_data("data/letters", a_letters_path, a_labaels)
+null_data, b_labels = load_data("data/letters", b_letters_path, b_labels)
 
-# Loop through each file
-for file in valid_files:
-    filepath = os.path.join('data/A/valid', file)
-    df = pd.read_csv(filepath, nrows=299)
-    df = pd.DataFrame(df.values.flatten()).T  
-    # spectogram = np.fft.fft2(df)
-    # spectogram = tf.abs(spectogram)
-    # add a label 1 to the data
-    valid.append((df, 1))
+data , labels = np.concatenate((a_data, null_data)), np.concatenate((a_labels, b_labels))
 
-for file in invalid_files:
-    filepath = os.path.join('data/A/invalid', file)
-    df = pd.read_csv(filepath, nrows=299)
-    df = pd.DataFrame(df.values.flatten()).T 
-    df = pd.concat([df, pd.DataFrame([1])], axis=0) 
-    # spectogram = np.fft.fft2(df)
-    # spectogram = tf.abs(spectogram)
-    # add a label 0 to the data
-    invalid.append((df, 0))
+model = create_model()
 
-# Convert the list of dataframes to a single dataframe
-data = invalid + valid
+history = model.fit(data, labels, epochs=20, batch_size=32)
 
-#shuffle the data
+model.save('ml/bin/icm_letters.keras')
 
-np.random.shuffle(data)
-
-# Split the data into inputs and targets
-
-x_train = [x[0] for x in data]
-y_train = [x[1] for x in data]
-
-# Create model
-model = RandomForestClassifier()
-
-# x_train = pad_sequences(x_train, padding='post')
-print(x_train)
-
-model.fit(x_train, y_train)
-
-# Train the model
-# history = model.fit(data, letters, epochs=100, validation_split=0.2)
-
-# Save the model
+print(model.predict(data[-1:]))
