@@ -1,43 +1,39 @@
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, LSTM, InputLayer
+from sklearn.preprocessing import LabelEncoder
 import numpy as np
 import pandas as pd
 import os
 
 def create_model(features=9, hiddenUnits=100, classes=2):
     model = Sequential()
-    model.add(InputLayer(shape=(None, features)))  # Sequence input layer
-    model.add(LSTM(hiddenUnits, return_sequences=False))  # LSTM layer
-    model.add(Dense(classes, activation='softmax'))  # Fully connected layer
+    model.add(InputLayer(shape=(None, features)))
+    model.add(LSTM(hiddenUnits, return_sequences=False))
+    model.add(Dense(classes, activation='softmax'))
 
-    # Compile the model
     model.compile(loss='sparse_categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
     return model
 
 
-def load_data(base_paths,data_paths = [], labels = []):
+def load_data(base_paths='data/letters',data_paths = []):
     data = []
+    labels = []
     for path in data_paths:
-        data.append(pd.read_csv(base_paths+path).values)
+        df = pd.read_csv(os.path.join(base_paths,path))
+        data.append(df.values)
+        labels.append(path.split('_')[0])
     data = np.array(data)
     return data, labels
 
 
-a_letters_path = os.listdir("data/letters")
-a_labaels = [0] * len(a_letters_path)
+dataset_path = os.listdir("data/letters")
 
-b_letters_path = os.listdir("data/letters")
-b_labels = [1] * len(b_letters_path)
+data , labels = load_data(data_paths=dataset_path)
 
-a_data, a_labels = load_data("data/letters", a_letters_path, a_labaels)
-null_data, b_labels = load_data("data/letters", b_letters_path, b_labels)
+el = LabelEncoder()
+labels = el.fit_transform(labels)
 
-data , labels = np.concatenate((a_data, null_data)), np.concatenate((a_labels, b_labels))
+model = create_model(classes=len(el.classes_))
+history = model.fit(data, labels, epochs=20, batch_size=32, validation_split=0.2)
 
-model = create_model()
-
-history = model.fit(data, labels, epochs=20, batch_size=32)
-
-model.save('ml/bin/icm_letters.keras')
-
-print(model.predict(data[-1:]))
+model.save('ml/bin/icm_letters_v2.keras')

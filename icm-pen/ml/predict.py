@@ -3,6 +3,10 @@ import numpy as np
 import pandas as pd
 import tensorflow as tf
 import matplotlib.pyplot as plot
+from sklearn.preprocessing import LabelEncoder
+# from transformers import GPT2LMHeadModel, GPT2Tokenizer
+# from transformers import TFGPT2LMHeadModel
+
 
 def predict_numbers():
     # Load the model
@@ -18,14 +22,18 @@ def predict_numbers():
     print(output)
 
 def predict_letters():
-    model = load_model('ml/bin/icm_letters.keras')
-    input_data = pd.read_csv("data/A/invalid/2024-04-17 09_12_21.407401.csv" )
+    model = load_model('ml/bin/icm_letters_v2.keras')
+    input_data = pd.read_csv('data/letters/U_1714822330.668097.csv')
     input_data = input_data.values
     input_data = np.array([input_data])
     y = model.predict(input_data)
-    
-    print(y)
-    
+    letters = ['A', 'I', 'U']
+    print(letters[np.argmax(y)])
+    for Y in y:
+        print(Y)
+
+predict_letters()
+   
 def predict_digits():
     model = load_model('ml/bin/digits.keras')
     # input_data = pd.read_csv("data/digit/hand_written_digits_training.csv")
@@ -36,4 +44,18 @@ def predict_digits():
     
     print(y)
 
-predict_letters()
+
+
+def predict_next_letter():
+    tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
+    model = TFGPT2LMHeadModel.from_pretrained("gpt2")
+
+    sequence = "The next letter after A is"
+
+    inputs = tokenizer.encode(sequence, return_tensors="pt")
+    outputs = model.generate(inputs, max_length=30, temperature=1.0, do_sample=True)
+
+    predicted_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
+
+    print(predicted_text)
+    

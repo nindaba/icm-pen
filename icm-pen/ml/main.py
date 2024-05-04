@@ -1,6 +1,6 @@
 import socket
 import os
-from time import sleep
+from time import sleep, time
 import matplotlib.pyplot as plt
 import matplotlib.animation as an
 import pandas as pd
@@ -10,30 +10,15 @@ import numpy as np
 
 ESP32_ADDR = "192.168.1.57"
 ESP32_PORT = 8020
-READ_SIZE = READ_SIZE
+READ_SIZE = 280
+CHAR_SIZES = [320,280,200]
+
+READ_SIZE_MAX = np.max( [320,280,200] )
 
 def save_csv_line(filename,line):
     with open(filename, mode='a', newline='') as file:
         if len(line.split(",")) == 9:
             file.writelines(line)
-
-
-def move_data_to_pure():
-    input_file = 'data/icm.csv'  # Input file
-    output_file = 'data/icm_pure.csv'  # Output file  # Output file
-
-    # Open the input file for reading and output file for writing
-    with open(input_file, 'r') as f_input, open(output_file, 'w') as f_output:
-        # Iterate over each line in the input file
-        f_output.write("acc_x, acc_y, acc_z,mgn_x,mgn_y,mgn_z,gyr_x,gyr_y,gyr_z\n")
-        for line in f_input:
-            # Check if the line has non-zero length
-            # if len(line.strip()) >= len("65343.000000,170.000000,16906.000000,65343.000000,170.000000,16906.000000,65343.000000,170.000000,16"):
-            # Write the line to the output file if it has non-zero length
-            if line.__contains__("NULL") == False:
-                f_output.write(line)
-            print(line)
-            # time.sleep(1)
 
 
 def create_pen_client():
@@ -42,7 +27,6 @@ def create_pen_client():
     message = "Request For Connection".encode()
     destination = (ESP32_ADDR, ESP32_PORT)
 
-    # Send the message
     sock.sendto(message, destination)
     sock.settimeout(2)
     return sock
@@ -50,7 +34,6 @@ def create_pen_client():
 
 fig = plt.figure()
 ax = fig.add_subplot(1, 1, 1)
-# ser = serial.Serial("/dev/tty.usbserial-SI88480", 2000000)
 tcp_client = create_pen_client()
 x = []
 y = []
@@ -62,10 +45,7 @@ y_off = 0
 z_off = 0
 
 
-# Function to update the graph with new data
 def animate(i):
-    # lines = ser.readall().decode()
-
     lines = tcp_client.recv(4096).decode()
 
     for line in lines.split("\n"):
@@ -82,20 +62,16 @@ def animate(i):
         y.clear()
         z.clear()
 
-    # Draw x and y lists
     ax.clear()
     ax.plot(x, label="x")
     ax.plot(y, label="y")
     ax.plot(z, label="z")
 
-    # Format plot
     plt.xticks(rotation=45, ha='right')
     plt.title('Accelerometer Sensor')
     plt.ylabel('acceleration m/s2')
     plt.ylim(-2, 2)
     plt.legend()
-    # plt.axis([1, None, 0, 1.1])  # Use for arbitrary number of trials
-    # plt.axis([1, 100, 0, 1.1]) #Use for 100 trial demo
 
 
 def find_offsets():
@@ -127,54 +103,44 @@ def find_offsets():
 
 def plot():
     find_offsets()
-    # Create a figure and axis
-    # fig, ax = plt.subplots()
-    # Animate the graph using FuncAnimation
-    ani = an.FuncAnimation(fig, animate, interval=0)  # Update every second (1000 milliseconds)
-    # ani.save('animation.mp4')
-    # Show the animated plot
+    an.FuncAnimation(fig, animate, interval=0)
 
     plt.show()
 
 def collect():
     count = 0
-    timestamp = pd.Timestamp.now()
     files_count = 0
+    timestamp = time()
     while True:
         lines = tcp_client.recv(4096).decode()
         if count == READ_SIZE:
-            timestamp = pd.Timestamp.now()
             count = 0
             files_count += 1
+            timestamp = time()
         
         for line in lines.split("\n"):
-            print(line)
-            
             if files_count == 100:
                 print("#################################### sleeping for 5 seconds start #########################################")
-                sleep(5)
-                print("#################################### sleeping for 5 seconds end   #########################################")
+                tcp_client.close()
                 
-                
-            filename = os.path.join("data", "A" , f"{timestamp}.csv")
+            filename = os.path.join("data", "letters" , f"U_{timestamp}.csv")
             save_csv_line(filename, line + "\n")
             
-        
         count += 1
+        percentage = (count / READ_SIZE) * 100
+        print(f"Reading {int(percentage)} %", end="\r")
         
 def client_speedometer():
     count = 0
     timestamp = pd.Timestamp.now()
     while True:
         lines = tcp_client.recv(4096).decode()
-        
         for line in lines.split("\n"):
             count += 1
             read = (count / READ_SIZE) * 100
             print(f"Reading {int(read)}%", end="\r")
             if(count == READ_SIZE):
                 count = 0
-                
                 now = pd.Timestamp.now()
                 delta =  now - timestamp
                 timestamp = now
@@ -182,7 +148,7 @@ def client_speedometer():
             
         
 def predict():
-    model = load_model('ml/bin/icm_letters.keras')
+    model = load_model('ml/bin/icm_letters_v2.keras')
     buffer = np.zeros((1, READ_SIZE, 9))
     count = 0
     while True:
@@ -195,28 +161,23 @@ def predict():
                 percentage = (count / READ_SIZE) * 100
                 print(f"Reading {int(percentage)} %", end="\r")
         
-        if count == 299:
-            labels = ["A", "NULL"]
+        if  count == READ_SIZE:
+            labels = ["A", "I", "U"]
             y = model.predict(buffer)
             count = 0
             max_index = np.argmax(y)
             if y[0][max_index] > 0.5:
-                print(f"\nPredicted: {labels[max_index]}")
-       
-if __name__ == '__main__':
-    # remove_broken_lines()
-    # read_pen()
-    # threading.Thread(target=move_data_to_pure).start()
+                print(f"\nPredicted: {y} -> {labels[max_index]}")
+                
+def run(fuc):
+    try:
+        fuc()
+    except KeyboardInterrupt as e:
+        print("Closing connection")
+        tcp_client.close()
+        print("Connection closed")
+        print("Exiting program")
+        exit(0)     
 
-    # create a thread for moving the data to icm_pure.csv using move_data_to_pure() and start it
-    # thread = threading.Thread(target=move_data_to_pure)
-    # thread.start()
-    # time.sleep(1)
-    # x = z
-    # plot()
-    # move_data_to_pure()
-    # read_pen()
-    
-    # predict()
-    # client_speedometer()
-    collect()
+# run(collect)
+run(predict)
