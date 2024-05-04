@@ -5,3 +5,5 @@ i2c_tools
 esp-idf
 udp_server
 smart_config
+.idea
+.vscode
