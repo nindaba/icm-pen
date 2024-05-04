@@ -1,3 +1,7 @@
 **/build/
 sdkconfig
 sdkconfig.old
+i2c_tools
+esp-idf
+udp_server
+smart_config
