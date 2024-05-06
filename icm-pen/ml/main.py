@@ -151,6 +151,7 @@ def predict():
     model = load_model('ml/bin/icm_letters_v2.keras')
     buffer = np.zeros((1, READ_SIZE, 9))
     count = 0
+    sentence = ""
     while True:
         lines = tcp_client.recv(4096).decode()
         for line in lines.split("\n"):
@@ -167,7 +168,9 @@ def predict():
             count = 0
             max_index = np.argmax(y)
             if y[0][max_index] > 0.5:
-                print(f"\nPredicted: {y} -> {labels[max_index]}")
+                predicted = labels[max_index]
+                sentence += predicted
+                print(f"\nPredicted: {y} -> {sentence}")
                 
 def run(fuc):
     try:
