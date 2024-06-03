@@ -11,11 +11,12 @@ import numpy as np
 ESP32_ADDR = "192.168.1.57"
 ESP32_PORT = 8020
 READ_SIZE = 280
-CHAR_SIZES = [320,280,200]
+CHAR_SIZES = {"A": 240, "I": 280, "U": 200}
 
-READ_SIZE_MAX = np.max( [320,280,200] )
+READ_SIZE_MAX = np.max([240, 280, 200])
 
-def save_csv_line(filename,line):
+
+def save_csv_line(filename, line):
     with open(filename, mode='a', newline='') as file:
         if len(line.split(",")) == 9:
             file.writelines(line)
@@ -107,29 +108,33 @@ def plot():
 
     plt.show()
 
-def collect():
+
+def collect(letter):
     count = 0
     files_count = 0
     timestamp = time()
+    read_size = CHAR_SIZES[letter]
     while True:
         lines = tcp_client.recv(4096).decode()
-        if count == READ_SIZE:
+        if count == read_size:
             count = 0
             files_count += 1
             timestamp = time()
-        
+
         for line in lines.split("\n"):
             if files_count == 100:
-                print("#################################### sleeping for 5 seconds start #########################################")
+                print(
+                    "#################################### sleeping for 5 seconds start #########################################")
                 tcp_client.close()
-                
-            filename = os.path.join("data", "letters" , f"U_{timestamp}.csv")
+
+            filename = os.path.join("data", "letters", f"{letter}_{timestamp}.csv")
             save_csv_line(filename, line + "\n")
-            
+
         count += 1
-        percentage = (count / READ_SIZE) * 100
+        percentage = (count / read_size) * 100
         print(f"Reading {int(percentage)} %", end="\r")
-        
+
+
 def client_speedometer():
     count = 0
     timestamp = pd.Timestamp.now()
@@ -139,16 +144,16 @@ def client_speedometer():
             count += 1
             read = (count / READ_SIZE) * 100
             print(f"Reading {int(read)}%", end="\r")
-            if(count == READ_SIZE):
+            if (count == READ_SIZE):
                 count = 0
                 now = pd.Timestamp.now()
-                delta =  now - timestamp
+                delta = now - timestamp
                 timestamp = now
                 print(f"Time taken to read {READ_SIZE} lines: {delta.total_seconds()}")
-            
-        
+
+
 def predict():
-    model = load_model('ml/bin/icm_letters_v2.keras')
+    model = load_model('ml/bin/icm_letters_v2.max.keras')
     buffer = np.zeros((1, READ_SIZE, 9))
     count = 0
     sentence = ""
@@ -161,8 +166,8 @@ def predict():
                 count = count + 1
                 percentage = (count / READ_SIZE) * 100
                 print(f"Reading {int(percentage)} %", end="\r")
-        
-        if  count == READ_SIZE:
+
+        if count == READ_SIZE:
             labels = ["A", "I", "U"]
             y = model.predict(buffer)
             count = 0
@@ -171,8 +176,12 @@ def predict():
                 predicted = labels[max_index]
                 sentence += predicted
                 print(f"\nPredicted: {y} -> {sentence}")
-                
-def run(fuc):
+                # save buffer under data/letters_test as A_timestamp.csv
+                # filename = os.path.join("data", "letters_test", f"A_{time()}.csv")
+                # np.savetxt(filename, buffer[0], delimiter=",")
+
+
+def run(fuc, *args, **kwargs):
     try:
         fuc()
     except KeyboardInterrupt as e:
@@ -180,7 +189,9 @@ def run(fuc):
         tcp_client.close()
         print("Connection closed")
         print("Exiting program")
-        exit(0)     
+        exit(0)
 
-# run(collect)
+
+# run(collect("I"))
 run(predict)
+# run(plot)
