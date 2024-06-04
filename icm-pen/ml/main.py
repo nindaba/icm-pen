@@ -6,12 +6,13 @@ import matplotlib.animation as an
 import pandas as pd
 from statistics import mean
 from tensorflow.keras.models import load_model
+from sklearn.preprocessing import LabelEncoder
 import numpy as np
 
 ESP32_ADDR = "192.168.1.57"
 ESP32_PORT = 8020
 READ_SIZE = 280
-CHAR_SIZES = {"A": 240, "I": 280, "U": 200}
+CHAR_SIZES = {"A": 240, "I": 280, "U": 200, "O": 200, "E": 240}
 
 READ_SIZE_MAX = np.max([240, 280, 200])
 
@@ -153,7 +154,9 @@ def client_speedometer():
 
 
 def predict():
-    model = load_model('ml/bin/icm_letters_v2.max.keras')
+    model = load_model('ml/bin/icm_letters_v2.se.keras')
+    le = LabelEncoder()
+    le.classes_ = np.load('ml/bin/label_encoder.npy')
     buffer = np.zeros((1, READ_SIZE, 9))
     count = 0
     sentence = ""
@@ -168,17 +171,16 @@ def predict():
                 print(f"Reading {int(percentage)} %", end="\r")
 
         if count == READ_SIZE:
-            labels = ["A", "I", "U"]
+            # labels = ["A", "I", "U"]
             y = model.predict(buffer)
             count = 0
             max_index = np.argmax(y)
             if y[0][max_index] > 0.5:
-                predicted = labels[max_index]
+                predicted = le.inverse_transform([max_index])[0]
                 sentence += predicted
                 print(f"\nPredicted: {y} -> {sentence}")
-                # save buffer under data/letters_test as A_timestamp.csv
-                # filename = os.path.join("data", "letters_test", f"A_{time()}.csv")
-                # np.savetxt(filename, buffer[0], delimiter=",")
+                filename = os.path.join("data", "letters_grouped_test", "E", f"E_{time()}.csv")
+                np.savetxt(filename, buffer[0], delimiter=",")
 
 
 def run(fuc, *args, **kwargs):
@@ -192,6 +194,6 @@ def run(fuc, *args, **kwargs):
         exit(0)
 
 
-# run(collect("I"))
+# run(collect("E"))
 run(predict)
 # run(plot)
