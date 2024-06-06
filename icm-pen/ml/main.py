@@ -200,8 +200,7 @@ def predict():
                 print("1")
                 sleep(1)
                 print("2")
-                sleep(1)
-                print("Go Go Go")
+                print("Write")
 
 
 def predict_collect_train_loop():

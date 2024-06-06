@@ -68,6 +68,3 @@ def train():
     print(f"Time taken to train the model: {time.time() - start}")
 
     model.save('ml/bin/icm_letters_v2.maxe.keras')
-
-
-train()
